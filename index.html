@@ -1,1099 +1,1357 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <title>💞 LoveVerse — For Us, Forever</title>
-  <meta name="description" content="A magical space for lovers — heartfelt messages, future dreams, and digital gifts." />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>
+<title>💞 LoveVerse — Your Universe of Love</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=Sacramento&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#05000f;
+  --rose:#ff1a6e;
+  --blush:#ff6fa8;
+  --violet:#8b31ff;
+  --gold:#ffc857;
+  --pearl:#fff0f5;
+  --mist:rgba(255,240,245,.06);
+  --rim:rgba(255,107,168,.2);
+  --glow-rose:0 0 60px rgba(255,26,110,.4);
+  --glow-violet:0 0 60px rgba(139,49,255,.4);
+  --r:1rem;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--pearl);font-family:'Inter',sans-serif;overflow-x:hidden;min-height:100vh}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Satisfy&display=swap" rel="stylesheet" />
+/* ── FLUID CANVAS ── */
+#fluid-bg{position:fixed;inset:0;z-index:0;width:100%;height:100%}
 
-  <style>
-    /* ── TOKENS ── */
-    :root {
-      --midnight: #08001280;
-      --deep-rose: #ff2d7a;
-      --blush: #ff6fa8;
-      --gold: #ffd166;
-      --lavender: #c77dff;
-      --mint: #a0f5d6;
-      --white: #fff8f8;
-      --glass: rgba(255, 255, 255, 0.06);
-      --glass-border: rgba(255, 107, 157, 0.25);
-      --shadow-rose: 0 0 40px rgba(255, 45, 122, 0.3);
-    }
+/* ── PARTICLE CANVAS ── */
+#particle-canvas{position:fixed;inset:0;z-index:1;pointer-events:none}
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+/* ── GLASS LAYER ── */
+.glass{
+  background:var(--mist);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  border:1px solid var(--rim);
+  border-radius:20px;
+}
 
-    body {
-      background: #08001a;
-      color: var(--white);
-      font-family: 'DM Sans', sans-serif;
-      overflow-x: hidden;
-      min-height: 100vh;
-    }
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 2.5rem;
+  background:rgba(5,0,15,.6);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--rim);
+}
+.nav-brand{
+  font-family:'Sacramento',cursive;
+  font-size:2rem;color:var(--blush);
+  text-shadow:0 0 30px rgba(255,107,168,.7);
+  cursor:pointer;
+}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{
+  color:rgba(255,240,245,.5);text-decoration:none;
+  font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;
+  transition:color .3s;position:relative;padding-bottom:4px;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:0;left:0;width:0;height:1px;
+  background:var(--blush);transition:width .3s;
+}
+.nav-links a:hover{color:var(--blush)}
+.nav-links a:hover::after{width:100%}
+.nav-right{display:flex;gap:.8rem;align-items:center}
+.theme-btn{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--rim);
+  background:var(--mist);cursor:pointer;font-size:1rem;
+  transition:all .3s;display:flex;align-items:center;justify-content:center;
+}
+.theme-btn:hover{border-color:var(--blush);box-shadow:var(--glow-rose)}
 
-    canvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
-    }
+/* ── PAGE WRAPPER ── */
+.page{position:relative;z-index:10}
 
-    /* ── FLOATING HEARTS RAIN ── */
-    .hearts-container {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 1;
-      overflow: hidden;
-    }
-    .heart-rain {
-      position: absolute;
-      top: -60px;
-      font-size: 1.2rem;
-      opacity: 0;
-      animation: fallDown linear infinite;
-      user-select: none;
-    }
-    @keyframes fallDown {
-      0%   { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
-      10%  { opacity: 0.7; }
-      90%  { opacity: 0.4; }
-      100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; }
-    }
+/* ── HERO ── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:7rem 2rem 4rem;
+  position:relative;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.4rem 1.2rem;border-radius:50px;
+  background:rgba(255,26,110,.12);border:1px solid rgba(255,26,110,.3);
+  font-size:.72rem;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--blush);margin-bottom:2rem;
+  animation:fadeUp .8s .2s both;
+}
+.hero-badge span{width:6px;height:6px;border-radius:50%;background:var(--rose);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.5)}}
 
-    /* ── LAYOUT ── */
-    .page {
-      position: relative;
-      z-index: 2;
-    }
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(3.5rem,10vw,8rem);
+  font-weight:300;line-height:1;
+  letter-spacing:-.02em;
+  animation:fadeUp .9s .4s both;
+  margin-bottom:.5rem;
+}
+.hero-title em{
+  font-style:italic;
+  background:linear-gradient(135deg,var(--rose),var(--violet),var(--blush));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-title-sub{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.4rem,3vw,2.5rem);
+  font-weight:300;color:rgba(255,240,245,.45);
+  letter-spacing:.1em;margin-bottom:2.5rem;
+  animation:fadeUp .9s .6s both;
+}
+.hero-desc{
+  max-width:480px;font-size:1rem;font-weight:300;
+  color:rgba(255,240,245,.55);line-height:1.8;
+  animation:fadeUp .9s .8s both;margin-bottom:3rem;
+}
+.hero-buttons{
+  display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;
+  animation:fadeUp .9s 1s both;
+}
+.btn{
+  padding:.9rem 2.5rem;border-radius:50px;border:none;
+  font-size:.88rem;font-weight:500;letter-spacing:.06em;
+  cursor:pointer;transition:all .35s;font-family:'Inter',sans-serif;
+  text-transform:uppercase;
+}
+.btn-rose{
+  background:linear-gradient(135deg,var(--rose),var(--violet));
+  color:#fff;box-shadow:0 8px 40px rgba(255,26,110,.45);
+}
+.btn-rose:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 16px 60px rgba(255,26,110,.65)}
+.btn-outline{
+  background:transparent;
+  border:1px solid var(--rim);color:var(--pearl);
+  backdrop-filter:blur(10px);
+}
+.btn-outline:hover{background:rgba(255,107,168,.1);border-color:var(--blush);transform:translateY(-4px)}
 
-    /* ── NAV ── */
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.4rem 2.5rem;
-      background: rgba(8, 0, 26, 0.5);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--glass-border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .logo {
-      font-family: 'Satisfy', cursive;
-      font-size: 1.8rem;
-      color: var(--blush);
-      letter-spacing: 1px;
-      text-shadow: 0 0 20px rgba(255, 111, 168, 0.6);
-    }
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
-    .nav-links a {
-      color: rgba(255,248,248,0.7);
-      text-decoration: none;
-      font-size: 0.88rem;
-      letter-spacing: 0.05em;
-      transition: color 0.3s;
-    }
-    .nav-links a:hover { color: var(--blush); }
+/* Scroll indicator */
+.hero-scroll{
+  position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.6rem;
+  animation:fadeUp 1s 1.5s both;
+}
+.scroll-line{width:1px;height:60px;background:linear-gradient(to bottom,var(--blush),transparent);animation:scrollPulse 2s infinite}
+.scroll-text{font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,240,245,.3)}
+@keyframes scrollPulse{0%,100%{opacity:.4;transform:scaleY(1)}50%{opacity:1;transform:scaleY(1.1)}}
 
-    /* ── HERO ── */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 3rem 2rem;
-      position: relative;
-    }
-    .hero-eyebrow {
-      font-size: 0.78rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--lavender);
-      margin-bottom: 1.2rem;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.3s forwards;
-    }
-    .hero-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(3rem, 8vw, 6.5rem);
-      line-height: 1.05;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--white) 0%, var(--blush) 50%, var(--lavender) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      opacity: 0;
-      animation: fadeUp 0.9s 0.5s forwards;
-      margin-bottom: 1.5rem;
-    }
-    .hero-sub {
-      font-size: 1.15rem;
-      font-weight: 300;
-      color: rgba(255,248,248,0.65);
-      max-width: 520px;
-      line-height: 1.7;
-      opacity: 0;
-      animation: fadeUp 0.9s 0.8s forwards;
-      margin-bottom: 2.8rem;
-    }
-    .hero-cta-row {
-      display: flex;
-      gap: 1.2rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      opacity: 0;
-      animation: fadeUp 0.9s 1.1s forwards;
-    }
-    .btn-primary {
-      padding: 0.85rem 2.2rem;
-      background: linear-gradient(135deg, var(--deep-rose), var(--lavender));
-      border: none;
-      border-radius: 50px;
-      color: white;
-      font-size: 0.95rem;
-      font-weight: 500;
-      cursor: pointer;
-      letter-spacing: 0.04em;
-      transition: transform 0.3s, box-shadow 0.3s;
-      box-shadow: 0 8px 32px rgba(255, 45, 122, 0.4);
-    }
-    .btn-primary:hover {
-      transform: translateY(-3px) scale(1.03);
-      box-shadow: 0 14px 40px rgba(255, 45, 122, 0.6);
-    }
-    .btn-ghost {
-      padding: 0.85rem 2.2rem;
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: 50px;
-      color: var(--white);
-      font-size: 0.95rem;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      transition: background 0.3s, transform 0.3s;
-      letter-spacing: 0.04em;
-    }
-    .btn-ghost:hover {
-      background: rgba(255,107,157,0.15);
-      transform: translateY(-3px);
-    }
+/* ── SECTION WRAPPER ── */
+.section{
+  max-width:1100px;margin:0 auto;
+  padding:7rem 2rem;
+  border-top:1px solid rgba(255,107,168,.1);
+}
+.section-eyebrow{
+  font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--violet);margin-bottom:.8rem;
+  display:flex;align-items:center;gap:.8rem;
+}
+.section-eyebrow::before{content:'';width:30px;height:1px;background:var(--violet)}
+.section-heading{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.2rem,5vw,4rem);
+  font-weight:300;line-height:1.15;
+  margin-bottom:1rem;
+}
+.section-heading em{font-style:italic;color:var(--blush)}
+.section-sub{
+  color:rgba(255,240,245,.45);font-size:.95rem;line-height:1.8;
+  max-width:560px;margin-bottom:3.5rem;font-weight:300;
+}
 
-    /* Scroll indicator */
-    .scroll-hint {
-      position: absolute;
-      bottom: 2.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      opacity: 0.5;
-      animation: bounce 2s infinite;
-    }
-    .scroll-hint span { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; }
-    .scroll-hint svg { width: 20px; }
-    @keyframes bounce {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(8px); }
-    }
+/* ── AI MESSAGE STUDIO ── */
+.studio-wrap{display:grid;grid-template-columns:1fr 1.2fr;gap:2rem;align-items:start}
+.studio-panel{padding:2.5rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.field{display:flex;flex-direction:column;gap:.5rem}
+.field label{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,240,245,.45)}
+.field input,.field select,.field textarea{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,107,168,.2);
+  border-radius:12px;padding:.8rem 1rem;
+  color:var(--pearl);font-family:'Inter',sans-serif;
+  font-size:.9rem;outline:none;transition:border-color .3s;
+  resize:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blush);background:rgba(255,107,168,.06)}
+.field select option{background:#0d0020}
+.gen-btn{
+  width:100%;padding:1rem;margin-top:1.2rem;
+  background:linear-gradient(135deg,var(--rose),var(--violet));
+  border:none;border-radius:14px;color:#fff;
+  font-family:'Inter',sans-serif;font-size:.92rem;
+  font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  cursor:pointer;transition:all .35s;
+  box-shadow:0 8px 32px rgba(255,26,110,.35);
+}
+.gen-btn:hover{transform:translateY(-3px);box-shadow:0 16px 50px rgba(255,26,110,.55)}
+.gen-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
-    /* ── SECTIONS ── */
-    section {
-      padding: 6rem 2rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .section-label {
-      font-size: 0.75rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--lavender);
-      margin-bottom: 0.8rem;
-    }
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      line-height: 1.15;
-      margin-bottom: 1.2rem;
-    }
-    .section-subtitle {
-      color: rgba(255,248,248,0.55);
-      font-size: 1rem;
-      line-height: 1.7;
-      max-width: 560px;
-      margin-bottom: 3rem;
-    }
+/* Output panel */
+.output-panel{padding:2.5rem;position:relative;min-height:320px;display:flex;flex-direction:column}
+.output-label{
+  font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;
+  color:rgba(255,240,245,.35);margin-bottom:1.5rem;
+  display:flex;align-items:center;gap:.5rem;
+}
+.output-label::before{
+  content:'';width:8px;height:8px;border-radius:50%;
+  background:var(--rose);box-shadow:0 0 10px var(--rose);
+  animation:pulse 2s infinite;
+}
+.output-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.3rem;font-style:italic;
+  line-height:1.9;color:var(--pearl);
+  flex:1;display:flex;align-items:center;
+  min-height:200px;
+}
+.output-placeholder{
+  color:rgba(255,240,245,.2);
+  font-size:1rem;font-style:normal;font-family:'Inter',sans-serif;
+  text-align:center;width:100%;
+}
+.output-actions{
+  display:flex;gap:.8rem;margin-top:1.5rem;flex-wrap:wrap;
+}
+.action-btn{
+  padding:.5rem 1.2rem;border-radius:8px;
+  border:1px solid rgba(255,107,168,.25);
+  background:rgba(255,107,168,.06);
+  color:rgba(255,240,245,.6);font-size:.78rem;
+  cursor:pointer;transition:all .3s;letter-spacing:.05em;
+}
+.action-btn:hover{border-color:var(--blush);color:var(--blush)}
 
-    /* ── MESSAGE GENERATOR ── */
-    #love-message-section {
-      border-top: 1px solid var(--glass-border);
-    }
-    .msg-card {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      padding: 2.5rem;
-      backdrop-filter: blur(20px);
-      box-shadow: var(--shadow-rose);
-    }
-    .msg-controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .msg-input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .msg-input-group label {
-      font-size: 0.78rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--lavender);
-    }
-    .msg-input-group input, .msg-input-group select {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      padding: 0.75rem 1rem;
-      color: var(--white);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.3s;
-    }
-    .msg-input-group input:focus, .msg-input-group select:focus {
-      border-color: var(--blush);
-    }
-    .msg-input-group select option { background: #1a0030; }
-    .msg-output {
-      background: rgba(255,45,122,0.08);
-      border: 1px solid rgba(255,45,122,0.2);
-      border-radius: 16px;
-      padding: 1.8rem;
-      margin-top: 1.5rem;
-      min-height: 120px;
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: 1.15rem;
-      line-height: 1.75;
-      color: var(--white);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      position: relative;
-    }
-    .msg-output::before {
-      content: '"';
-      font-size: 4rem;
-      color: rgba(255,45,122,0.2);
-      position: absolute;
-      top: -10px;
-      left: 1rem;
-      font-family: Georgia, serif;
-    }
-    .msg-loading {
-      display: inline-block;
-      width: 6px; height: 6px;
-      background: var(--blush);
-      border-radius: 50%;
-      animation: pulse 1s infinite;
-      box-shadow: 16px 0 0 var(--lavender), 32px 0 0 var(--gold);
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.5); opacity: 0.6; }
-    }
-    .copy-btn {
-      position: absolute;
-      bottom: 1rem; right: 1rem;
-      background: none;
-      border: 1px solid var(--glass-border);
-      border-radius: 8px;
-      color: rgba(255,248,248,0.5);
-      font-size: 0.75rem;
-      padding: 0.3rem 0.7rem;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .copy-btn:hover { color: var(--blush); border-color: var(--blush); }
+/* Typing dots */
+.typing{display:flex;align-items:center;gap:6px;padding:1rem 0}
+.typing span{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--blush);display:block;
+  animation:typingBounce .8s infinite;
+}
+.typing span:nth-child(2){animation-delay:.15s;background:var(--violet)}
+.typing span:nth-child(3){animation-delay:.3s;background:var(--gold)}
+@keyframes typingBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
-    /* ── COUNTDOWN ── */
-    #countdown-section { border-top: 1px solid var(--glass-border); }
-    .countdown-card {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      padding: 2.5rem;
-      backdrop-filter: blur(20px);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      align-items: start;
-    }
-    .countdown-setup input[type="date"], .countdown-setup input[type="text"] {
-      width: 100%;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      padding: 0.75rem 1rem;
-      color: var(--white);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.95rem;
-      outline: none;
-      margin-bottom: 1rem;
-      transition: border-color 0.3s;
-      color-scheme: dark;
-    }
-    .countdown-setup label {
-      display: block;
-      font-size: 0.78rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--lavender);
-      margin-bottom: 0.5rem;
-    }
-    .countdown-display {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.8rem;
-      grid-column: 1 / -1;
-      margin-top: 1rem;
-    }
-    .count-unit {
-      background: rgba(255,45,122,0.1);
-      border: 1px solid rgba(255,45,122,0.2);
-      border-radius: 16px;
-      padding: 1.5rem 1rem;
-      text-align: center;
-    }
-    .count-num {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.8rem, 4vw, 3rem);
-      font-weight: 700;
-      color: var(--blush);
-      display: block;
-      line-height: 1;
-    }
-    .count-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: rgba(255,248,248,0.5);
-      margin-top: 0.5rem;
-      display: block;
-    }
-    .event-name-display {
-      grid-column: 1 / -1;
-      text-align: center;
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: 1.4rem;
-      color: var(--gold);
-      margin-bottom: 0.5rem;
-    }
+/* ── COUNTDOWN ── */
+.countdown-wrap{
+  display:grid;grid-template-columns:360px 1fr;gap:2rem;align-items:start
+}
+.cd-setup{padding:2.5rem}
+.cd-display{padding:2.5rem;text-align:center}
+.cd-event-name{
+  font-family:'Sacramento',cursive;font-size:2.5rem;
+  color:var(--gold);margin-bottom:2rem;
+  text-shadow:0 0 30px rgba(255,200,87,.4);
+  min-height:3.5rem;
+}
+.cd-units{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.cd-unit{
+  background:rgba(255,26,110,.08);
+  border:1px solid rgba(255,26,110,.15);
+  border-radius:16px;padding:1.5rem .5rem;
+  position:relative;overflow:hidden;
+}
+.cd-unit::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,26,110,.05),rgba(139,49,255,.05));
+}
+.cd-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.5rem,5vw,4rem);
+  font-weight:300;color:var(--blush);
+  display:block;line-height:1;
+  text-shadow:0 0 30px rgba(255,107,168,.5);
+}
+.cd-label{
+  font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;
+  color:rgba(255,240,245,.35);margin-top:.5rem;display:block;
+}
+.cd-placeholder{
+  color:rgba(255,240,245,.2);font-size:.9rem;
+  padding:3rem 1rem;
+}
 
-    /* ── DIGITAL GIFT BOX ── */
-    #gift-section { border-top: 1px solid var(--glass-border); }
-    .gift-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1.2rem;
-    }
-    .gift-card {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      padding: 2rem 1.5rem;
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(10px);
-    }
-    .gift-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,45,122,0.1), rgba(199,125,255,0.1));
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .gift-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(255,45,122,0.25); border-color: var(--blush); }
-    .gift-card:hover::before { opacity: 1; }
-    .gift-emoji { font-size: 2.8rem; display: block; margin-bottom: 1rem; }
-    .gift-name {
-      font-size: 0.9rem;
-      font-weight: 500;
-      margin-bottom: 0.3rem;
-      color: var(--white);
-    }
-    .gift-desc { font-size: 0.78rem; color: rgba(255,248,248,0.5); line-height: 1.5; }
-    .gift-ribbon {
-      position: absolute;
-      top: 0; right: 0;
-      background: linear-gradient(135deg, var(--deep-rose), var(--lavender));
-      color: white;
-      font-size: 0.62rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.3rem 0.7rem;
-      border-bottom-left-radius: 10px;
-    }
+/* Quick-add chips */
+.quick-chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.2rem}
+.chip{
+  padding:.35rem .9rem;border-radius:50px;
+  border:1px solid var(--rim);
+  background:rgba(255,107,168,.06);
+  color:rgba(255,240,245,.55);font-size:.75rem;
+  cursor:pointer;transition:all .3s;
+}
+.chip:hover{border-color:var(--blush);color:var(--blush);background:rgba(255,107,168,.12)}
 
-    /* ── GIFT MODAL ── */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(8,0,26,0.85);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(6px);
-    }
-    .modal-overlay.open { display: flex; }
-    .modal-box {
-      background: #140028;
-      border: 1px solid var(--glass-border);
-      border-radius: 28px;
-      padding: 3rem;
-      max-width: 500px;
-      width: 90%;
-      text-align: center;
-      position: relative;
-      animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-      box-shadow: 0 40px 100px rgba(255,45,122,0.3);
-    }
-    @keyframes modalPop {
-      from { transform: scale(0.7); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    .modal-emoji { font-size: 4.5rem; display: block; margin-bottom: 1rem; }
-    .modal-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-      color: var(--blush);
-    }
-    .modal-body { color: rgba(255,248,248,0.7); line-height: 1.8; margin-bottom: 2rem; font-size: 0.95rem; }
-    .modal-close {
-      position: absolute;
-      top: 1.2rem; right: 1.5rem;
-      background: none;
-      border: none;
-      color: rgba(255,248,248,0.4);
-      font-size: 1.5rem;
-      cursor: pointer;
-      transition: color 0.3s;
-    }
-    .modal-close:hover { color: var(--blush); }
-    .confetti-burst { position: absolute; pointer-events: none; }
+/* ── GIFT VAULT ── */
+.gifts-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:1.2rem
+}
+.gift-tile{
+  padding:2rem 1.5rem;text-align:center;
+  cursor:pointer;position:relative;overflow:hidden;
+  border-radius:20px;
+  transition:all .4s cubic-bezier(.34,1.56,.64,1);
+}
+.gift-tile::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,26,110,.08),rgba(139,49,255,.08));
+  opacity:0;transition:opacity .3s;
+}
+.gift-tile:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 24px 60px rgba(255,26,110,.3)}
+.gift-tile:hover::before{opacity:1}
+.gift-icon{font-size:3rem;display:block;margin-bottom:1rem;filter:drop-shadow(0 0 12px rgba(255,107,168,.5))}
+.gift-name{font-size:.9rem;font-weight:500;margin-bottom:.4rem}
+.gift-tagline{font-size:.75rem;color:rgba(255,240,245,.4);line-height:1.5}
+.gift-badge{
+  position:absolute;top:.8rem;right:.8rem;
+  font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.2rem .6rem;border-radius:50px;font-weight:600;
+}
+.badge-hot{background:rgba(255,26,110,.2);color:var(--rose);border:1px solid rgba(255,26,110,.3)}
+.badge-new{background:rgba(139,49,255,.2);color:var(--violet);border:1px solid rgba(139,49,255,.3)}
+.badge-rare{background:rgba(255,200,87,.15);color:var(--gold);border:1px solid rgba(255,200,87,.3)}
 
-    /* ── LOVE NOTES TIMELINE ── */
-    #notes-section { border-top: 1px solid var(--glass-border); }
-    .timeline {
-      position: relative;
-      padding-left: 2rem;
-    }
-    .timeline::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 1px;
-      background: linear-gradient(to bottom, var(--deep-rose), transparent);
-    }
-    .timeline-item {
-      position: relative;
-      margin-bottom: 2.5rem;
-      padding-left: 1.5rem;
-    }
-    .timeline-item::before {
-      content: '♥';
-      position: absolute;
-      left: -2.15rem;
-      top: 0;
-      color: var(--deep-rose);
-      font-size: 0.9rem;
-      background: #08001a;
-      padding: 2px 4px;
-    }
-    .timeline-tag {
-      font-size: 0.72rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--lavender);
-      margin-bottom: 0.5rem;
-    }
-    .timeline-text {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: 1.1rem;
-      line-height: 1.7;
-      color: rgba(255,248,248,0.85);
-    }
+/* ── MODAL ── */
+.modal{
+  display:none;position:fixed;inset:0;z-index:999;
+  align-items:center;justify-content:center;
+  background:rgba(5,0,15,.85);backdrop-filter:blur(12px);
+}
+.modal.open{display:flex}
+.modal-inner{
+  max-width:520px;width:90%;padding:3.5rem;
+  border-radius:28px;text-align:center;position:relative;
+  background:linear-gradient(135deg,rgba(20,0,40,.95),rgba(10,0,25,.95));
+  border:1px solid rgba(255,107,168,.3);
+  box-shadow:0 40px 120px rgba(255,26,110,.35),0 0 0 1px rgba(255,107,168,.1);
+  animation:modalIn .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes modalIn{from{transform:scale(.6) translateY(40px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal-close{
+  position:absolute;top:1.2rem;right:1.5rem;
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,107,168,.1);border:1px solid var(--rim);
+  color:rgba(255,240,245,.5);font-size:1rem;cursor:pointer;
+  transition:all .3s;
+}
+.modal-close:hover{background:rgba(255,26,110,.2);color:var(--blush)}
+.modal-icon{font-size:5rem;display:block;margin-bottom:1.2rem;filter:drop-shadow(0 0 20px rgba(255,107,168,.6))}
+.modal-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2.2rem;font-weight:300;color:var(--blush);margin-bottom:1rem
+}
+.modal-body{color:rgba(255,240,245,.65);line-height:1.9;font-size:.95rem;margin-bottom:2rem;font-weight:300}
+.modal-share{
+  display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;
+}
+.share-btn{
+  padding:.5rem 1.1rem;border-radius:8px;border:1px solid var(--rim);
+  background:var(--mist);color:rgba(255,240,245,.6);font-size:.78rem;
+  cursor:pointer;transition:all .3s;
+}
+.share-btn:hover{border-color:var(--blush);color:var(--blush)}
 
-    /* ── FUTURE DREAMS ── */
-    #future-section { border-top: 1px solid var(--glass-border); }
-    .dreams-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 1.2rem;
-    }
-    .dream-card {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      padding: 1.8rem;
-      backdrop-filter: blur(12px);
-      transition: transform 0.3s, border-color 0.3s;
-      position: relative;
-    }
-    .dream-card:hover { transform: translateY(-4px); border-color: var(--lavender); }
-    .dream-year {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: rgba(255,255,255,0.1);
-      position: absolute;
-      top: 1rem; right: 1.2rem;
-    }
-    .dream-icon { font-size: 1.8rem; margin-bottom: 0.8rem; display: block; }
-    .dream-title { font-size: 1rem; font-weight: 500; margin-bottom: 0.5rem; }
-    .dream-desc { font-size: 0.82rem; color: rgba(255,248,248,0.5); line-height: 1.6; }
+/* Confetti pieces */
+.conf{
+  position:fixed;pointer-events:none;z-index:1000;
+  animation:confAnim 2.5s ease-out forwards;
+  border-radius:2px;
+}
+@keyframes confAnim{
+  0%{opacity:1;transform:translateY(0) rotate(0) scale(1)}
+  100%{opacity:0;transform:translateY(160px) rotate(720deg) scale(.3)}
+}
 
-    /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid var(--glass-border);
-      padding: 3rem 2rem;
-      text-align: center;
-      background: rgba(8,0,26,0.6);
-      backdrop-filter: blur(12px);
-    }
-    .footer-logo {
-      font-family: 'Satisfy', cursive;
-      font-size: 2rem;
-      color: var(--blush);
-      display: block;
-      margin-bottom: 1rem;
-    }
-    footer p { color: rgba(255,248,248,0.35); font-size: 0.82rem; }
+/* ── LOVE TIMELINE ── */
+.timeline{position:relative;padding-left:2.5rem}
+.timeline::before{
+  content:'';position:absolute;left:.5rem;top:0;bottom:0;
+  width:1px;background:linear-gradient(to bottom,var(--rose),rgba(255,26,110,0));
+}
+.tl-item{position:relative;margin-bottom:3rem;animation:fadeUp .7s both}
+.tl-dot{
+  position:absolute;left:-2.1rem;top:.3rem;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--rose);box-shadow:0 0 16px var(--rose);
+  border:2px solid var(--ink);
+}
+.tl-year{
+  font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--violet);margin-bottom:.5rem;
+}
+.tl-quote{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.2rem;font-style:italic;line-height:1.75;
+  color:rgba(255,240,245,.8);
+}
+.tl-author{font-size:.78rem;color:rgba(255,240,245,.35);margin-top:.5rem;letter-spacing:.05em}
 
-    /* ── ANIMATIONS ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .reveal {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+/* ── FUTURE VISION ── */
+.future-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem
+}
+.future-card{
+  padding:2rem;border-radius:20px;position:relative;overflow:hidden;
+  transition:all .4s;
+}
+.future-card:hover{transform:translateY(-6px);border-color:rgba(255,107,168,.4)}
+.future-card::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at top right,rgba(255,26,110,.08),transparent 60%);
+  pointer-events:none;
+}
+.fc-year{
+  font-family:'Cormorant Garamond',serif;
+  font-size:4rem;font-weight:300;
+  color:rgba(255,240,245,.05);
+  position:absolute;top:.5rem;right:1rem;
+  line-height:1;
+}
+.fc-icon{font-size:2rem;margin-bottom:1rem;display:block;filter:drop-shadow(0 0 10px rgba(255,107,168,.4))}
+.fc-title{font-size:1.05rem;font-weight:500;margin-bottom:.6rem}
+.fc-desc{font-size:.82rem;color:rgba(255,240,245,.45);line-height:1.7}
+.fc-tag{
+  display:inline-block;margin-top:1rem;
+  padding:.2rem .7rem;border-radius:50px;font-size:.65rem;
+  letter-spacing:.1em;text-transform:uppercase;
+  background:rgba(255,26,110,.1);color:var(--rose);
+  border:1px solid rgba(255,26,110,.2);
+}
 
-    /* ── MOBILE ── */
-    @media (max-width: 600px) {
-      nav { padding: 1rem 1.2rem; }
-      .nav-links { display: none; }
-      .msg-controls { grid-template-columns: 1fr; }
-      .countdown-card { grid-template-columns: 1fr; }
-      .countdown-display { grid-template-columns: repeat(2, 1fr); }
-      .hero-cta-row { flex-direction: column; align-items: center; }
-    }
+/* ── LOVE LETTER GENERATOR ── */
+.letter-wrap{
+  padding:2.5rem;
+  background:linear-gradient(135deg,rgba(255,26,110,.04),rgba(139,49,255,.04));
+}
+.letter-controls{display:flex;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem}
+.letter-output{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;line-height:2;
+  color:rgba(255,240,245,.85);
+  background:rgba(5,0,15,.5);
+  border:1px solid rgba(255,107,168,.15);
+  border-radius:16px;padding:2rem;
+  min-height:250px;
+  white-space:pre-line;
+}
+.letter-output.empty{
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,240,245,.2);font-size:.9rem;
+  font-family:'Inter',sans-serif;font-style:normal;
+}
 
-    /* AI Loading state */
-    .ai-thinking {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--lavender);
-      font-size: 0.88rem;
-      font-style: normal;
-      font-family: 'DM Sans', sans-serif;
-    }
-  </style>
+/* ── MUSIC CARD ── */
+.music-section{padding:2.5rem}
+.music-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem}
+.music-card{
+  padding:1.5rem;border-radius:16px;cursor:pointer;
+  transition:all .3s;text-align:center;
+  border:1px solid rgba(255,107,168,.15);
+  background:rgba(255,107,168,.04);
+}
+.music-card:hover{border-color:var(--blush);transform:translateY(-4px);background:rgba(255,107,168,.08)}
+.music-note{font-size:2.5rem;margin-bottom:.8rem;display:block}
+.music-name{font-size:.9rem;font-weight:500;margin-bottom:.3rem}
+.music-mood{font-size:.75rem;color:rgba(255,240,245,.35)}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid rgba(255,107,168,.1);
+  padding:4rem 2rem;text-align:center;
+  background:rgba(5,0,15,.8);
+}
+.footer-brand{
+  font-family:'Sacramento',cursive;font-size:3rem;
+  color:var(--blush);display:block;margin-bottom:.8rem;
+  text-shadow:0 0 30px rgba(255,107,168,.5);
+}
+.footer-tagline{color:rgba(255,240,245,.3);font-size:.88rem;font-style:italic;margin-bottom:2rem}
+.footer-heart{
+  font-size:1.5rem;animation:heartbeat 1.5s ease infinite;display:inline-block;
+}
+@keyframes heartbeat{0%,100%{transform:scale(1)}15%{transform:scale(1.3)}30%{transform:scale(1)}}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.reveal.vis{opacity:1;transform:none}
+
+/* ── AMBIENT HEARTS ── */
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+.amb-h{
+  position:absolute;top:-60px;
+  opacity:0;animation:amb-fall linear infinite;
+  user-select:none;pointer-events:none;font-size:1rem;
+}
+@keyframes amb-fall{
+  0%{transform:translateY(0) rotate(-10deg) scale(.7);opacity:0}
+  10%{opacity:.6}90%{opacity:.2}
+  100%{transform:translateY(105vh) rotate(20deg) scale(1.1);opacity:0}
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  nav{padding:.8rem 1.2rem}
+  .nav-links{display:none}
+  .studio-wrap,.countdown-wrap{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .cd-units{grid-template-columns:repeat(2,1fr)}
+  .hero-buttons{flex-direction:column;align-items:center}
+  .section{padding:4rem 1.2rem}
+}
+
+/* ── CURSOR TRAIL ── */
+.cursor-trail{
+  position:fixed;width:8px;height:8px;border-radius:50%;
+  pointer-events:none;z-index:9999;
+  background:radial-gradient(circle,var(--rose),var(--violet));
+  transform:translate(-50%,-50%);
+  transition:transform .1s;
+  mix-blend-mode:screen;
+}
+</style>
 </head>
 <body>
 
-<!-- WebGL Canvas -->
-<canvas id="fluid-canvas"></canvas>
+<!-- WebGL Fluid Background -->
+<canvas id="fluid-bg"></canvas>
 
-<!-- Falling hearts -->
-<div class="hearts-container" id="hearts-container"></div>
+<!-- Particle Canvas for hearts/stars -->
+<canvas id="particle-canvas"></canvas>
 
-<!-- CONTENT -->
+<!-- Ambient floating hearts -->
+<div class="ambient" id="ambient"></div>
+
+<!-- Cursor trail elements -->
+<div class="cursor-trail" id="cur1"></div>
+<div class="cursor-trail" id="cur2" style="width:5px;height:5px;opacity:.6;transition-duration:.2s"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand" onclick="scrollTo({top:0,behavior:'smooth'})">LoveVerse</div>
+  <ul class="nav-links">
+    <li><a href="#msg-section">AI Messages</a></li>
+    <li><a href="#cd-section">Countdown</a></li>
+    <li><a href="#gift-section">Gift Vault</a></li>
+    <li><a href="#future-section">Our Future</a></li>
+    <li><a href="#letter-section">Love Letter</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-btn" onclick="toggleTheme()" title="Mood">🌙</button>
+    <button class="theme-btn" onclick="triggerHearts()" title="Hearts">💕</button>
+  </div>
+</nav>
+
+<!-- PAGE -->
 <div class="page">
 
-  <!-- NAV -->
-  <nav>
-    <div class="logo">💞 LoveVerse</div>
-    <ul class="nav-links">
-      <li><a href="#love-message-section">Messages</a></li>
-      <li><a href="#countdown-section">Countdown</a></li>
-      <li><a href="#gift-section">Gifts</a></li>
-      <li><a href="#future-section">Our Future</a></li>
-    </ul>
-  </nav>
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-badge"><span></span> Made for two souls, forever</div>
+  <h1 class="hero-title">
+    Every moment<br/>
+    <em>with you</em><br/>
+    is eternity.
+  </h1>
+  <p class="hero-title-sub">— your private universe of love —</p>
+  <p class="hero-desc">A cinematic space for lovers. AI-crafted messages, real-time countdowns, digital gifts, and a timeline of your future together.</p>
+  <div class="hero-buttons">
+    <button class="btn btn-rose" onclick="scrollTo('#msg-section')">✨ Write with AI</button>
+    <button class="btn btn-outline" onclick="scrollTo('#gift-section')">🎁 Open Gift Vault</button>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">scroll to explore</span>
+  </div>
+</section>
 
-  <!-- HERO -->
-  <div class="hero">
-    <p class="hero-eyebrow">✦ A universe built just for two ✦</p>
-    <h1 class="hero-title">Every moment<br/><em>with you</em><br/>is forever.</h1>
-    <p class="hero-sub">
-      An intimate digital space to celebrate your love — with heartfelt messages, countdown to your special days, digital gifts, and dreams of tomorrow.
-    </p>
-    <div class="hero-cta-row">
-      <button class="btn-primary" onclick="document.getElementById('love-message-section').scrollIntoView({behavior:'smooth'})">
-        💌 Write a Love Message
-      </button>
-      <button class="btn-ghost" onclick="document.getElementById('gift-section').scrollIntoView({behavior:'smooth'})">
-        🎁 Send a Gift
-      </button>
+<!-- ══ AI MESSAGE STUDIO ══ -->
+<div class="section" id="msg-section">
+  <p class="section-eyebrow reveal">AI Love Studio</p>
+  <h2 class="section-heading reveal">Say it <em>perfectly,</em><br/>every time.</h2>
+  <p class="section-sub reveal">Powered by Claude AI — craft deeply personal, emotionally resonant messages in seconds. English, Hinglish, Shayari — your choice.</p>
+
+  <div class="studio-wrap">
+    <div class="studio-panel glass reveal">
+      <div class="form-row">
+        <div class="field">
+          <label>Your Name</label>
+          <input id="s-sender" type="text" placeholder="e.g. Rohit"/>
+        </div>
+        <div class="field">
+          <label>Their Name</label>
+          <input id="s-receiver" type="text" placeholder="e.g. Priya"/>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:1rem">
+        <label>Occasion / Feeling</label>
+        <select id="s-mood">
+          <option value="romantic">💕 Deeply Romantic</option>
+          <option value="missing">🌙 I Miss You So Much</option>
+          <option value="anniversary">🎂 Anniversary</option>
+          <option value="morning">🌅 Good Morning Love</option>
+          <option value="goodnight">🌃 Good Night, My World</option>
+          <option value="apology">🙏 I'm Sorry (Sweet Apology)</option>
+          <option value="proposal">💍 Will You Marry Me?</option>
+          <option value="future">🚀 Our Future Together</option>
+          <option value="firstlove">✨ First Love Confession</option>
+          <option value="longsleep">💌 Long Distance Love</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:1rem">
+        <label>Language Style</label>
+        <select id="s-lang">
+          <option value="english">🇬🇧 Poetic English</option>
+          <option value="hinglish">🇮🇳 Hinglish (Hindi + English)</option>
+          <option value="shayari">📜 Urdu Shayari</option>
+          <option value="hindi">🪷 Pure Hindi</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>A special memory or detail (optional)</label>
+        <textarea id="s-detail" rows="2" placeholder="e.g. how we met under the rain..."></textarea>
+      </div>
+      <button class="gen-btn" id="gen-btn" onclick="generateMsg()">✨ Generate with AI</button>
     </div>
-    <div class="scroll-hint">
-      <span>Explore</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,248,248,0.5)" stroke-width="2">
-        <path d="M12 5v14M5 12l7 7 7-7"/>
-      </svg>
+
+    <div class="output-panel glass reveal" id="output-panel">
+      <div class="output-label">AI is writing for you</div>
+      <div class="output-text" id="output-text">
+        <div class="output-placeholder">Your message will appear here, crafted just for them…</div>
+      </div>
+      <div class="output-actions" id="output-actions" style="display:none">
+        <button class="action-btn" onclick="copyMsg()">📋 Copy</button>
+        <button class="action-btn" onclick="shareMsg()">🔗 Share</button>
+        <button class="action-btn" onclick="saveMsg()">💾 Save</button>
+        <button class="action-btn" onclick="generateMsg()">🔄 Regenerate</button>
+      </div>
     </div>
   </div>
 
-  <!-- ── LOVE MESSAGE GENERATOR ── -->
-  <section id="love-message-section">
-    <p class="section-label reveal">AI Love Messages</p>
-    <h2 class="section-title reveal">Say it <em>perfectly.</em></h2>
-    <p class="section-subtitle reveal">Let AI craft a heartfelt message tailored just for your beloved. Personal, poetic, and deeply yours.</p>
+  <!-- Saved messages -->
+  <div id="saved-msgs-wrap" style="margin-top:2rem;display:none">
+    <p class="section-eyebrow" style="margin-bottom:1rem">Saved Messages</p>
+    <div id="saved-msgs" style="display:flex;flex-direction:column;gap:.8rem"></div>
+  </div>
+</div>
 
-    <div class="msg-card reveal">
-      <div class="msg-controls">
-        <div class="msg-input-group">
-          <label>Your name</label>
-          <input type="text" id="sender-name" placeholder="e.g. Rohit" />
-        </div>
-        <div class="msg-input-group">
-          <label>Their name</label>
-          <input type="text" id="receiver-name" placeholder="e.g. Priya" />
-        </div>
-        <div class="msg-input-group">
-          <label>Mood / Occasion</label>
-          <select id="msg-mood">
-            <option value="romantic">💕 Deeply Romantic</option>
-            <option value="missing">🌙 Missing You</option>
-            <option value="anniversary">🎂 Anniversary</option>
-            <option value="morning">🌅 Good Morning</option>
-            <option value="goodnight">🌃 Good Night</option>
-            <option value="apology">🙏 Sweet Apology</option>
-            <option value="future">🚀 Our Future Together</option>
-          </select>
-        </div>
-        <div class="msg-input-group">
-          <label>Language style</label>
-          <select id="msg-lang">
-            <option value="english">English</option>
-            <option value="hinglish">Hinglish (Hindi + English)</option>
-            <option value="poetic">Poetic / Shayari style</option>
-          </select>
-        </div>
+<!-- ══ COUNTDOWN ══ -->
+<div class="section" id="cd-section">
+  <p class="section-eyebrow reveal">Special Days</p>
+  <h2 class="section-heading reveal">Every second<br/><em>closer</em> to you.</h2>
+  <p class="section-sub reveal">Mark your special moments — anniversaries, dates, proposals, reunions.</p>
+
+  <div class="countdown-wrap">
+    <div class="cd-setup glass reveal">
+      <div class="field" style="margin-bottom:1rem">
+        <label>Event Name</label>
+        <input id="cd-name" type="text" placeholder="e.g. Our 1st Anniversary 💍"/>
       </div>
-      <button class="btn-primary" id="generate-btn" onclick="generateLoveMessage()" style="width:100%">
-        ✨ Generate Message
-      </button>
-      <div class="msg-output" id="msg-output">
-        <span style="color:rgba(255,248,248,0.3); font-style:normal; font-family:'DM Sans',sans-serif; font-size:0.9rem;">
-          Fill in the names and click Generate ↑
-        </span>
+      <div class="field" style="margin-bottom:1.2rem">
+        <label>Date & Time</label>
+        <input id="cd-date" type="datetime-local"/>
+      </div>
+      <button class="gen-btn" onclick="startCD()">Start Countdown 💫</button>
+      <div class="quick-chips">
+        <div class="chip" onclick="setChip('Valentine\'s Day 2026',new Date('2026-02-14'))">💝 Valentine's</div>
+        <div class="chip" onclick="setChip('New Year Together',new Date('2027-01-01'))">🎆 New Year</div>
+        <div class="chip" onclick="setChip('Our First Date',new Date('2025-12-25'))">✨ First Date</div>
+        <div class="chip" onclick="setChip('Wedding Day 💍',new Date('2027-06-15'))">💒 Wedding</div>
       </div>
     </div>
-  </section>
-
-  <!-- ── COUNTDOWN ── -->
-  <section id="countdown-section">
-    <p class="section-label reveal">Special Days</p>
-    <h2 class="section-title reveal">Counting <em>every second</em> until we meet.</h2>
-    <p class="section-subtitle reveal">Set your special dates — anniversaries, dates, proposals, trips — and watch time count down beautifully.</p>
-
-    <div class="countdown-card reveal">
-      <div class="countdown-setup">
-        <label>Event name</label>
-        <input type="text" id="event-name-input" placeholder="e.g. Our Anniversary" />
-        <label>Date & time</label>
-        <input type="datetime-local" id="event-date-input" />
-        <button class="btn-primary" onclick="startCountdown()" style="margin-top:0.5rem; width:100%">
-          Start Countdown 💫
-        </button>
+    <div class="cd-display glass reveal">
+      <div class="cd-event-name" id="cd-event-name">Set a special date →</div>
+      <div class="cd-units" id="cd-units">
+        <div class="cd-unit"><span class="cd-num" id="cd-d">—</span><span class="cd-label">Days</span></div>
+        <div class="cd-unit"><span class="cd-num" id="cd-h">—</span><span class="cd-label">Hours</span></div>
+        <div class="cd-unit"><span class="cd-num" id="cd-m">—</span><span class="cd-label">Minutes</span></div>
+        <div class="cd-unit"><span class="cd-num" id="cd-s">—</span><span class="cd-label">Seconds</span></div>
       </div>
-      <div style="display:flex; flex-direction:column; gap:0.8rem; justify-content: center;">
-        <p style="color:rgba(255,248,248,0.4); font-size:0.85rem; text-align:center;">Set an event to see the countdown ↑</p>
+      <p style="margin-top:1.5rem;font-size:.78rem;color:rgba(255,240,245,.25);letter-spacing:.1em" id="cd-since"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GIFT VAULT ══ -->
+<div class="section" id="gift-section">
+  <p class="section-eyebrow reveal">Gift Vault</p>
+  <h2 class="section-heading reveal">Give something<br/><em>they'll never forget.</em></h2>
+  <p class="section-sub reveal">Digital gifts with real emotions — tap to unwrap a moment of magic.</p>
+
+  <div class="gifts-grid">
+    <div class="gift-tile glass reveal" onclick="openGift('roses')">
+      <span class="gift-badge badge-hot">Popular</span>
+      <span class="gift-icon">🌹</span>
+      <div class="gift-name">999 Roses</div>
+      <div class="gift-tagline">A garden that never wilts</div>
+    </div>
+    <div class="gift-tile glass reveal" onclick="openGift('star')">
+      <span class="gift-badge badge-rare">Rare</span>
+      <span class="gift-icon">⭐</span>
+      <div class="gift-name">A Star For You</div>
+      <div class="gift-tagline">Yours in the cosmos, forever</div>
+    </div>
+    <div class="gift-tile glass reveal" onclick="openGift('ring')">
+      <span class="gift-icon">💍</span>
+      <div class="gift-name">Promise Ring</div>
+      <div class="gift-tagline">My eternal vow to you</div>
+    </div>
+    <div class="gift-tile glass reveal" onclick="openGift('music')">
+      <span class="gift-badge badge-new">New</span>
+      <span class="gift-icon">🎵</span>
+      <div class="gift-name">Our Playlist</div>
+      <div class="gift-tagline">Every song, a memory</div>
+    </div>
+    <div class="gift-tile glass reveal" onclick="openGift('moon')">
+      <span class="gift-icon">🌙</span>
+      <div class="gift-name">The Moon</div>
+      <div class="gift-tagline">I'd pull it down for you</div>
+    </div>
+    <div class="gift-tile glass reveal" onclick="openGift('time')">
+      <span class="gift-badge badge-rare">Future</span>
+      <span class="gift-icon">⏳</span>
+      <div class="gift-name">Time Capsule 2030</div>
+      <div class="gift-tagline">Open together in 5 years</div>
+    </div>
+    <div class="gift-tile glass reveal" onclick="openGift('universe')">
+      <span class="gift-badge badge-rare">∞</span>
+      <span class="gift-icon">🌌</span>
+      <div class="gift-name">A Universe</div>
+      <div class="gift-tagline">Built entirely for you</div>
+    </div>
+    <div class="gift-tile glass reveal" onclick="openGift('poem')">
+      <span class="gift-icon">📜</span>
+      <div class="gift-name">AI Love Poem</div>
+      <div class="gift-tagline">Written by AI, felt by the heart</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LOVE TIMELINE ══ -->
+<div class="section" id="timeline-section">
+  <p class="section-eyebrow reveal">Our Story</p>
+  <h2 class="section-heading reveal">The chapters of<br/><em>us.</em></h2>
+  <p class="section-sub reveal">The moments too precious to forget — woven into the fabric of who we are.</p>
+
+  <div class="timeline">
+    <div class="tl-item reveal">
+      <div class="tl-dot"></div>
+      <div class="tl-year">Chapter One · The Beginning</div>
+      <div class="tl-quote">"The first time I saw you, I didn't know I was looking at my entire world. The universe had quietly been rearranging itself — for years — so that we could end up in the same room at the same moment."</div>
+      <div class="tl-author">— The day everything changed</div>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-dot"></div>
+      <div class="tl-year">Chapter Two · First Words</div>
+      <div class="tl-quote">"I remember what you said the first time we really talked. It wasn't extraordinary — but the way you said it made me feel like I'd been waiting my whole life to hear exactly those words from exactly you."</div>
+      <div class="tl-author">— The conversation that started everything</div>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-dot"></div>
+      <div class="tl-year">Chapter Three · When I Knew</div>
+      <div class="tl-quote">"It was an ordinary Tuesday. You laughed at something small, and I saw the whole rest of my life in that laugh. I knew then — quietly, certainly — that I wanted to be the reason you smiled like that, forever."</div>
+      <div class="tl-author">— The moment of certainty</div>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-dot"></div>
+      <div class="tl-year">Chapter Four · Right Now</div>
+      <div class="tl-quote">"Every morning I wake up and the first thought is you. Not a dramatic realization — just a quiet, warm certainty. You are home. You are every reason I want today to be beautiful."</div>
+      <div class="tl-author">— This very moment</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LOVE LETTER ══ -->
+<div class="section" id="letter-section">
+  <p class="section-eyebrow reveal">AI Letter Forge</p>
+  <h2 class="section-heading reveal">A letter that will<br/><em>live forever.</em></h2>
+  <p class="section-sub reveal">Generate a full, heartfelt letter — long-form, deeply personal, ready to send or print.</p>
+
+  <div class="letter-wrap glass reveal">
+    <div class="letter-controls">
+      <div class="field" style="flex:1;min-width:160px">
+        <label>From</label>
+        <input id="l-from" type="text" placeholder="Your name"/>
       </div>
-      <div class="countdown-display" id="countdown-display" style="display:none">
-        <div class="event-name-display" id="event-name-display"></div>
-        <div class="count-unit"><span class="count-num" id="cd-days">00</span><span class="count-label">Days</span></div>
-        <div class="count-unit"><span class="count-num" id="cd-hours">00</span><span class="count-label">Hours</span></div>
-        <div class="count-unit"><span class="count-num" id="cd-mins">00</span><span class="count-label">Minutes</span></div>
-        <div class="count-unit"><span class="count-num" id="cd-secs">00</span><span class="count-label">Seconds</span></div>
+      <div class="field" style="flex:1;min-width:160px">
+        <label>To</label>
+        <input id="l-to" type="text" placeholder="Their name"/>
+      </div>
+      <div class="field" style="flex:1;min-width:160px">
+        <label>Theme</label>
+        <select id="l-theme">
+          <option value="forever">💕 Forever Love</option>
+          <option value="missing">🌙 Missing You Deeply</option>
+          <option value="gratitude">🙏 Gratitude for You</option>
+          <option value="future">🚀 Our Future Dreams</option>
+          <option value="apology">💌 A Heartfelt Apology</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:flex-end">
+        <button class="gen-btn" style="margin-top:0;padding:.8rem 1.5rem;width:auto" id="letter-btn" onclick="generateLetter()">✍️ Write Letter</button>
       </div>
     </div>
-  </section>
-
-  <!-- ── GIFTS ── -->
-  <section id="gift-section">
-    <p class="section-label reveal">Digital Gifts</p>
-    <h2 class="section-title reveal">Give something <em>unforgettable.</em></h2>
-    <p class="section-subtitle reveal">Virtual gifts that carry real feelings — tap to unwrap and share the moment.</p>
-
-    <div class="gift-grid">
-      <div class="gift-card reveal" onclick="openGift('bouquet')">
-        <span class="gift-ribbon">Popular</span>
-        <span class="gift-emoji">💐</span>
-        <div class="gift-name">Virtual Bouquet</div>
-        <div class="gift-desc">A thousand roses that never wilt</div>
-      </div>
-      <div class="gift-card reveal" onclick="openGift('stars')">
-        <span class="gift-emoji">⭐</span>
-        <div class="gift-name">Name a Star</div>
-        <div class="gift-desc">A star in the cosmos, just for you</div>
-      </div>
-      <div class="gift-card reveal" onclick="openGift('music')">
-        <span class="gift-ribbon">New</span>
-        <span class="gift-emoji">🎵</span>
-        <div class="gift-name">Our Song</div>
-        <div class="gift-desc">A playlist of moments we've shared</div>
-      </div>
-      <div class="gift-card reveal" onclick="openGift('ring')">
-        <span class="gift-emoji">💍</span>
-        <div class="gift-name">Promise Ring</div>
-        <div class="gift-desc">My forever promise to you</div>
-      </div>
-      <div class="gift-card reveal" onclick="openGift('letter')">
-        <span class="gift-emoji">📜</span>
-        <div class="gift-name">Love Letter</div>
-        <div class="gift-desc">Words that will live forever</div>
-      </div>
-      <div class="gift-card reveal" onclick="openGift('future')">
-        <span class="gift-ribbon">✨ Future</span>
-        <span class="gift-emoji">🚀</span>
-        <div class="gift-name">Future Date</div>
-        <div class="gift-desc">A date in 2050 — booked just for us</div>
-      </div>
+    <div class="letter-output empty" id="letter-output">Click "Write Letter" to generate a full, beautiful love letter with AI ↑</div>
+    <div style="display:flex;gap:.8rem;margin-top:1rem;flex-wrap:wrap" id="letter-actions" style="display:none">
+      <button class="action-btn" onclick="copyLetter()">📋 Copy Letter</button>
+      <button class="action-btn" onclick="printLetter()">🖨️ Print / Save as PDF</button>
     </div>
-  </section>
+  </div>
+</div>
 
-  <!-- ── NOTES TIMELINE ── -->
-  <section id="notes-section">
-    <p class="section-label reveal">Love Timeline</p>
-    <h2 class="section-title reveal">Milestones of <em>our story.</em></h2>
-    <p class="section-subtitle reveal">The little moments that became the biggest chapters.</p>
+<!-- ══ FUTURE VISION ══ -->
+<div class="section" id="future-section">
+  <p class="section-eyebrow reveal">Our Future</p>
+  <h2 class="section-heading reveal">Dreams we'll<br/><em>build together.</em></h2>
+  <p class="section-sub reveal">From tomorrow to infinity — a map of everything we'll become.</p>
 
-    <div class="timeline reveal">
-      <div class="timeline-item">
-        <div class="timeline-tag">The beginning</div>
-        <div class="timeline-text">"The first time I saw you, I didn't know that I was looking at my whole world."</div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-tag">First date</div>
-        <div class="timeline-text">"We talked until midnight and I wished the clock would stop — I never wanted to say goodnight."</div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-tag">When I knew</div>
-        <div class="timeline-text">"It was an ordinary Tuesday. You laughed at something silly. And I knew I wanted to hear that laugh for the rest of my life."</div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-tag">Right now</div>
-        <div class="timeline-text">"Every morning I wake up grateful that somehow, in this big universe, I found you."</div>
-      </div>
+  <div class="future-grid">
+    <div class="future-card glass reveal">
+      <span class="fc-year">2025</span>
+      <span class="fc-icon">✈️</span>
+      <div class="fc-title">Our First Trip Abroad</div>
+      <div class="fc-desc">Getting lost in cobblestone streets, eating local food, taking photos we'll show our grandchildren.</div>
+      <span class="fc-tag">Adventure</span>
     </div>
-  </section>
-
-  <!-- ── FUTURE DREAMS ── -->
-  <section id="future-section">
-    <p class="section-label reveal">Our Future Together</p>
-    <h2 class="section-title reveal">Dreams we'll <em>live together.</em></h2>
-    <p class="section-subtitle reveal">The adventures, milestones, and magic moments we're building toward — one dream at a time.</p>
-
-    <div class="dreams-grid">
-      <div class="dream-card reveal">
-        <span class="dream-year">2025</span>
-        <span class="dream-icon">✈️</span>
-        <div class="dream-title">Our First Trip Abroad</div>
-        <div class="dream-desc">Wandering cobblestone streets, eating croissants at sunrise, lost together in the best way.</div>
-      </div>
-      <div class="dream-card reveal">
-        <span class="dream-year">2026</span>
-        <span class="dream-icon">🏠</span>
-        <div class="dream-title">Our Own Little Home</div>
-        <div class="dream-desc">Where mornings smell like coffee and every corner holds our laughter.</div>
-      </div>
-      <div class="dream-card reveal">
-        <span class="dream-year">2027</span>
-        <span class="dream-icon">💍</span>
-        <div class="dream-title">The Yes That Changes Everything</div>
-        <div class="dream-desc">One question. One word. A lifetime of us.</div>
-      </div>
-      <div class="dream-card reveal">
-        <span class="dream-year">2030</span>
-        <span class="dream-icon">🌅</span>
-        <div class="dream-title">Watching the World Grow</div>
-        <div class="dream-desc">Building something beautiful together — a family, a legacy, a love story for the ages.</div>
-      </div>
-      <div class="dream-card reveal">
-        <span class="dream-year">2050</span>
-        <span class="dream-icon">👴👵</span>
-        <div class="dream-title">Still Us, Still Holding Hands</div>
-        <div class="dream-desc">Fifty years from now, I'll still choose you. Every single day.</div>
-      </div>
-      <div class="dream-card reveal">
-        <span class="dream-year">∞</span>
-        <span class="dream-icon">🌌</span>
-        <div class="dream-title">Beyond This Universe</div>
-        <div class="dream-desc">In every timeline, every dimension, every life — it's always you.</div>
-      </div>
+    <div class="future-card glass reveal">
+      <span class="fc-year">2026</span>
+      <span class="fc-icon">🏠</span>
+      <div class="fc-title">Our Own Space</div>
+      <div class="fc-desc">A home where mornings smell like coffee and every corner holds something of ours.</div>
+      <span class="fc-tag">Home</span>
     </div>
-  </section>
+    <div class="future-card glass reveal">
+      <span class="fc-year">2027</span>
+      <span class="fc-icon">💍</span>
+      <div class="fc-title">The Proposal</div>
+      <div class="fc-desc">One perfect question. One breathless moment. A lifetime that begins with a yes.</div>
+      <span class="fc-tag">Forever</span>
+    </div>
+    <div class="future-card glass reveal">
+      <span class="fc-year">2028</span>
+      <span class="fc-icon">💒</span>
+      <div class="fc-title">Our Wedding Day</div>
+      <div class="fc-desc">Dancing under lights, surrounded by everyone we love. The day we become we.</div>
+      <span class="fc-tag">Sacred</span>
+    </div>
+    <div class="future-card glass reveal">
+      <span class="fc-year">2030</span>
+      <span class="fc-icon">🌱</span>
+      <div class="fc-title">We Grow</div>
+      <div class="fc-desc">A family, a legacy, little hearts that carry pieces of both of us into the future.</div>
+      <span class="fc-tag">Legacy</span>
+    </div>
+    <div class="future-card glass reveal">
+      <span class="fc-year">2050</span>
+      <span class="fc-icon">👴🏻👵🏻</span>
+      <div class="fc-title">Still Holding Hands</div>
+      <div class="fc-desc">Fifty years later, I'd still choose you. Every single morning. Without a second thought.</div>
+      <span class="fc-tag">Always</span>
+    </div>
+    <div class="future-card glass reveal">
+      <span class="fc-year">∞</span>
+      <span class="fc-icon">🌌</span>
+      <div class="fc-title">Beyond This Universe</div>
+      <div class="fc-desc">In every timeline, every dimension, every possible version of existence — it was always you.</div>
+      <span class="fc-tag">Infinite</span>
+    </div>
+    <div class="future-card glass reveal" style="border:1px dashed rgba(255,107,168,.3);cursor:pointer" onclick="addDream()">
+      <span class="fc-icon">✨</span>
+      <div class="fc-title">Add Your Dream</div>
+      <div class="fc-desc">What do you both dream about? Write your future chapter here.</div>
+      <span class="fc-tag">Your Story</span>
+    </div>
+  </div>
+</div>
 
-  <footer>
-    <span class="footer-logo">💞 LoveVerse</span>
-    <p>Made with infinite love. Every pixel dedicated to <em>you.</em></p>
-  </footer>
+<footer>
+  <span class="footer-brand">LoveVerse</span>
+  <p class="footer-tagline">Every pixel dedicated to you — forever and beyond</p>
+  <span class="footer-heart">💕</span>
+</footer>
 </div>
 
 <!-- GIFT MODAL -->
-<div class="modal-overlay" id="gift-modal">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeGift()">×</button>
-    <span class="modal-emoji" id="modal-emoji">🎁</span>
-    <h2 class="modal-title" id="modal-title">A Gift for You</h2>
-    <p class="modal-body" id="modal-body"></p>
-    <button class="btn-primary" onclick="closeGift()">💝 Keep this forever</button>
+<div class="modal" id="gift-modal">
+  <div class="modal-inner">
+    <button class="modal-close" onclick="closeModal('gift-modal')">×</button>
+    <span class="modal-icon" id="m-icon">🎁</span>
+    <h2 class="modal-title" id="m-title">A Gift</h2>
+    <p class="modal-body" id="m-body"></p>
+    <button class="btn btn-rose" onclick="closeModal('gift-modal')">💝 Keep Forever</button>
+    <div class="modal-share">
+      <button class="share-btn" onclick="copyGiftText()">📋 Copy Text</button>
+      <button class="share-btn" onclick="shareGift()">📤 Share</button>
+    </div>
   </div>
 </div>
 
-<script src="./webgl-fluid.js"></script>
+<!-- DREAM MODAL -->
+<div class="modal" id="dream-modal">
+  <div class="modal-inner">
+    <button class="modal-close" onclick="closeModal('dream-modal')">×</button>
+    <h2 class="modal-title">✨ Add Your Dream</h2>
+    <p class="modal-body">What future chapter will you two write?</p>
+    <div class="field" style="margin-bottom:1rem;text-align:left">
+      <label>Year</label>
+      <input id="d-year" type="text" placeholder="e.g. 2029" style="background:rgba(255,255,255,.05);border:1px solid var(--rim);border-radius:12px;padding:.8rem 1rem;color:var(--pearl);font-family:'Inter',sans-serif;font-size:.9rem;outline:none;width:100%"/>
+    </div>
+    <div class="field" style="margin-bottom:1rem;text-align:left">
+      <label>Dream</label>
+      <textarea id="d-dream" rows="3" placeholder="e.g. Watch the northern lights together..." style="background:rgba(255,255,255,.05);border:1px solid var(--rim);border-radius:12px;padding:.8rem 1rem;color:var(--pearl);font-family:'Inter',sans-serif;font-size:.9rem;outline:none;width:100%;resize:none"></textarea>
+    </div>
+    <button class="btn btn-rose" onclick="saveDream()">✨ Add to Our Future</button>
+  </div>
+</div>
 
 <script>
-// ── HEARTS RAIN ──
-const heartsContainer = document.getElementById('hearts-container');
-const heartSymbols = ['💕','💗','💖','💝','💘','❤️','🌸','✨','💫','⭐'];
-function spawnHeart() {
-  const h = document.createElement('div');
-  h.className = 'heart-rain';
-  h.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
-  h.style.left = Math.random() * 100 + 'vw';
-  const dur = 6 + Math.random() * 8;
-  h.style.animationDuration = dur + 's';
-  h.style.animationDelay = Math.random() * 4 + 's';
-  h.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
-  heartsContainer.appendChild(h);
-  setTimeout(() => h.remove(), (dur + 4) * 1000);
+// ── PATCH FETCH FOR CONFIG ──
+const _origFetch = window.fetch;
+window.fetch = (url, opts) =>
+  typeof url === 'string' && url.includes('config.json')
+    ? _origFetch('love-config.json', opts)
+    : _origFetch(url, opts);
+</script>
+
+<script>
+// Override canvas selector — fluid sim targets first canvas
+const canvas = document.getElementById('fluid-bg');
+</script>
+<script src="./love-fluid.js"></script>
+
+<script>
+// ──────────────────────────────────────────
+// PARTICLE SYSTEM — hearts + stars on canvas
+// ──────────────────────────────────────────
+const pc = document.getElementById('particle-canvas');
+const ctx = pc.getContext('2d');
+let particles = [];
+function resizePC(){pc.width=innerWidth;pc.height=innerHeight}
+resizePC();window.addEventListener('resize',resizePC);
+
+class Particle{
+  constructor(x,y,type='heart'){
+    this.x=x||Math.random()*pc.width;
+    this.y=y||Math.random()*pc.height;
+    this.type=type;
+    this.size=Math.random()*18+6;
+    this.vx=(Math.random()-.5)*.6;
+    this.vy=-(Math.random()*1.2+.4);
+    this.alpha=1;
+    this.decay=Math.random()*.008+.004;
+    this.hue=Math.random()<.5?345+Math.random()*30:270+Math.random()*40;
+  }
+  update(){
+    this.x+=this.vx;this.y+=this.vy;
+    this.alpha-=this.decay;
+    this.vy+=.015;
+  }
+  draw(){
+    ctx.save();ctx.globalAlpha=this.alpha;
+    ctx.fillStyle=`hsl(${this.hue},80%,70%)`;
+    ctx.shadowBlur=20;ctx.shadowColor=`hsl(${this.hue},80%,60%)`;
+    if(this.type==='heart'){
+      drawHeart(ctx,this.x,this.y,this.size);
+    } else {
+      ctx.font=`${this.size}px serif`;
+      ctx.fillText('✦',this.x,this.y);
+    }
+    ctx.restore();
+  }
 }
-setInterval(spawnHeart, 600);
-for (let i = 0; i < 8; i++) spawnHeart();
+
+function drawHeart(ctx,x,y,s){
+  ctx.beginPath();
+  ctx.moveTo(x,y+s*.3);
+  ctx.bezierCurveTo(x,y,x-s*.6,y,x-s*.6,y+s*.4);
+  ctx.bezierCurveTo(x-s*.6,y+s*.8,x,y+s*1.1,x,y+s*1.3);
+  ctx.bezierCurveTo(x,y+s*1.1,x+s*.6,y+s*.8,x+s*.6,y+s*.4);
+  ctx.bezierCurveTo(x+s*.6,y,x,y,x,y+s*.3);
+  ctx.closePath();ctx.fill();
+}
+
+function animPC(){
+  ctx.clearRect(0,0,pc.width,pc.height);
+  particles=particles.filter(p=>p.alpha>0);
+  particles.forEach(p=>{p.update();p.draw();});
+  requestAnimationFrame(animPC);
+}
+animPC();
+
+// Spawn ambient particles
+setInterval(()=>{
+  if(particles.length<80)
+    particles.push(new Particle(Math.random()*pc.width,pc.height+20, Math.random()>.3?'heart':'star'));
+},400);
+
+// Mouse trail particles
+document.addEventListener('mousemove',e=>{
+  if(Math.random()>.6) particles.push(new Particle(e.clientX,e.clientY,'heart'));
+});
+
+// Touch trail
+document.addEventListener('touchmove',e=>{
+  const t=e.touches[0];
+  if(Math.random()>.5) particles.push(new Particle(t.clientX,t.clientY,'heart'));
+},{passive:true});
+
+function triggerHearts(){
+  for(let i=0;i<30;i++)
+    setTimeout(()=>particles.push(new Particle(Math.random()*pc.width,Math.random()*pc.height,'heart')),i*30);
+}
+
+// ── CURSOR TRAIL ──
+const c1=document.getElementById('cur1'),c2=document.getElementById('cur2');
+document.addEventListener('mousemove',e=>{
+  c1.style.left=e.clientX+'px';c1.style.top=e.clientY+'px';
+  setTimeout(()=>{c2.style.left=e.clientX+'px';c2.style.top=e.clientY+'px'},80);
+});
+
+// ── AMBIENT HEARTS ──
+const amb=document.getElementById('ambient');
+const syms=['💕','💗','💖','💝','✨','💫','🌸','⭐'];
+function spawnAmb(){
+  const d=document.createElement('div');
+  d.className='amb-h';d.textContent=syms[Math.floor(Math.random()*syms.length)];
+  d.style.left=Math.random()*100+'vw';
+  const dur=7+Math.random()*9;
+  d.style.animationDuration=dur+'s';
+  d.style.animationDelay=Math.random()*5+'s';
+  d.style.fontSize=(.7+Math.random()*1.3)+'rem';
+  amb.appendChild(d);
+  setTimeout(()=>d.remove(),(dur+5)*1000);
+}
+for(let i=0;i<12;i++)spawnAmb();
+setInterval(spawnAmb,900);
 
 // ── SCROLL REVEAL ──
-const observer = new IntersectionObserver(entries => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) {
-      setTimeout(() => e.target.classList.add('visible'), i * 80);
-    }
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting) setTimeout(()=>e.target.classList.add('vis'),i*90);
   });
-}, { threshold: 0.15 });
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-// ── LOVE MESSAGE GENERATOR (Claude API) ──
-async function generateLoveMessage() {
-  const sender = document.getElementById('sender-name').value.trim() || 'me';
-  const receiver = document.getElementById('receiver-name').value.trim() || 'you';
-  const mood = document.getElementById('msg-mood').value;
-  const lang = document.getElementById('msg-lang').value;
-  const out = document.getElementById('msg-output');
-  const btn = document.getElementById('generate-btn');
-
-  btn.disabled = true;
-  btn.textContent = '⏳ Writing...';
-  out.innerHTML = '<span class="ai-thinking"><span class="msg-loading"></span> Crafting your message with love…</span>';
-
-  const moodMap = {
-    romantic: 'deeply romantic and passionate',
-    missing: 'about missing them deeply and longing to be together',
-    anniversary: 'celebrating a beautiful anniversary milestone',
-    morning: 'a warm, sweet good morning message',
-    goodnight: 'a tender and loving good night message',
-    apology: 'a sincere, heartfelt sweet apology',
-    future: 'about dreams and an exciting future together'
-  };
-  const langMap = {
-    english: 'Write in beautiful poetic English.',
-    hinglish: 'Write naturally mixing Hindi and English (Hinglish), like how Indian couples speak.',
-    poetic: 'Write as a beautiful Urdu/Hindi shayari or poem with rhyme.'
-  };
-
-  const prompt = `Write a ${moodMap[mood]} love message from ${sender} to ${receiver}. ${langMap[lang]} Keep it 3-5 sentences, deeply personal and emotionally moving. Make it feel like it was written just for them. Do not add quotes or labels, just the message.`;
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    const data = await res.json();
-    const message = data.content?.[0]?.text || 'Could not generate message. Please try again.';
-    out.innerHTML = `${message}<button class="copy-btn" onclick="copyMsg()">Copy 📋</button>`;
-  } catch (err) {
-    out.innerHTML = '<span style="color:var(--blush)">Something went wrong. Please try again. 💔</span>';
-  }
-
-  btn.disabled = false;
-  btn.textContent = '✨ Generate Message';
+// ── SMOOTH SCROLL ──
+function scrollTo(sel){
+  const el=document.querySelector(sel);
+  if(el) el.scrollIntoView({behavior:'smooth'});
 }
 
-function copyMsg() {
-  const text = document.getElementById('msg-output').innerText.replace('Copy 📋', '').trim();
-  navigator.clipboard.writeText(text);
-  document.querySelector('.copy-btn').textContent = 'Copied! ✅';
+// ── THEME TOGGLE ──
+let darkMode=true;
+function toggleTheme(){
+  darkMode=!darkMode;
+  document.body.style.background=darkMode?'#05000f':'#0a001a';
+  document.querySelector('.theme-btn').textContent=darkMode?'🌙':'☀️';
+}
+
+// ── AI MESSAGE GENERATOR ──
+let savedMessages=[];
+async function generateMsg(){
+  const sender=document.getElementById('s-sender').value.trim()||'me';
+  const receiver=document.getElementById('s-receiver').value.trim()||'you';
+  const mood=document.getElementById('s-mood').value;
+  const lang=document.getElementById('s-lang').value;
+  const detail=document.getElementById('s-detail').value.trim();
+
+  const moodMap={
+    romantic:'deeply passionate and romantic — the kind that makes their heart stop',
+    missing:'about missing them desperately, the ache of their absence, the longing to be near them',
+    anniversary:'celebrating how far they\'ve come together, the depth of their love over time',
+    morning:'a warm, tender good morning — making them feel loved from the very first second of their day',
+    goodnight:'a beautiful good night, making them feel held even in sleep, across any distance',
+    apology:'a sincere, emotionally intelligent apology — tender, accountable, and full of love',
+    proposal:'a breathtaking marriage proposal — the most important words ever spoken',
+    future:'vivid, poetic dreams of their shared future — adventures, home, family, forever',
+    firstlove:'a first love confession — vulnerable, nervous, electric with feeling',
+    longsleep:'a long-distance love message — bridging miles with emotion'
+  };
+  const langMap={
+    english:'Write in rich, poetic English. Use imagery and metaphor.',
+    hinglish:'Write in natural Hinglish — mix Hindi and English the way Indian couples genuinely speak, with warmth and intimacy.',
+    shayari:'Write as a beautiful Urdu shayari — with rhyme, rhythm, and the classical shayari feel. Use words like dil, mohabbat, ruh, zindagi.',
+    hindi:'Write in pure, heartfelt Hindi with Devanagari script. Make it feel genuine and emotionally deep.'
+  };
+
+  const btn=document.getElementById('gen-btn');
+  const out=document.getElementById('output-text');
+  btn.disabled=true;btn.textContent='✨ Writing…';
+  out.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';
+  document.getElementById('output-actions').style.display='none';
+
+  const prompt=`Write a message that is ${moodMap[mood]}.
+It is from ${sender} to ${receiver}.
+${detail?'Include this personal detail: '+detail:''}
+${langMap[lang]}
+Length: 4-6 sentences. Make it emotionally powerful, specific, unforgettable.
+Do NOT add labels, quotes, or preamble. Just the message.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',max_tokens:1000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content?.[0]?.text||'Could not generate. Please try again.';
+    out.innerHTML='<span style="font-style:italic">'+text+'</span>';
+    document.getElementById('output-actions').style.display='flex';
+    window._currentMsg=text;
+  }catch(e){
+    out.innerHTML='<span style="color:var(--rose);font-style:normal;font-size:.9rem">Something went wrong. Please try again. 💔</span>';
+  }
+  btn.disabled=false;btn.textContent='✨ Generate with AI';
+}
+
+function copyMsg(){
+  if(!window._currentMsg)return;
+  navigator.clipboard.writeText(window._currentMsg);
+  showToast('Copied to clipboard! 📋');
+}
+function shareMsg(){
+  if(!window._currentMsg)return;
+  if(navigator.share){navigator.share({text:window._currentMsg})}
+  else copyMsg();
+}
+function saveMsg(){
+  if(!window._currentMsg)return;
+  savedMessages.push(window._currentMsg);
+  renderSavedMsgs();
+  showToast('Message saved! 💾');
+}
+function renderSavedMsgs(){
+  const wrap=document.getElementById('saved-msgs-wrap');
+  const cont=document.getElementById('saved-msgs');
+  if(!savedMessages.length){wrap.style.display='none';return;}
+  wrap.style.display='block';
+  cont.innerHTML=savedMessages.map((m,i)=>`
+    <div class="glass" style="padding:1.2rem 1.5rem;border-radius:14px;position:relative">
+      <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;line-height:1.7;color:rgba(255,240,245,.8)">${m}</p>
+      <button class="action-btn" style="margin-top:.8rem" onclick="navigator.clipboard.writeText(savedMessages[${i}]);showToast('Copied!')">Copy</button>
+    </div>
+  `).join('');
 }
 
 // ── COUNTDOWN ──
-let countdownInterval = null;
-function startCountdown() {
-  const eventDate = document.getElementById('event-date-input').value;
-  const eventName = document.getElementById('event-name-input').value.trim() || 'Our Special Day';
-  if (!eventDate) return;
-
-  const target = new Date(eventDate).getTime();
-  const display = document.getElementById('countdown-display');
-  document.getElementById('event-name-display').textContent = '💝 ' + eventName;
-  display.style.display = 'grid';
-
-  if (countdownInterval) clearInterval(countdownInterval);
-  countdownInterval = setInterval(() => {
-    const diff = target - Date.now();
-    if (diff <= 0) {
-      clearInterval(countdownInterval);
-      document.getElementById('cd-days').textContent = '🎉';
-      document.getElementById('cd-hours').textContent = '🎉';
-      document.getElementById('cd-mins').textContent = '🎉';
-      document.getElementById('cd-secs').textContent = '🎉';
+let cdInterval=null;
+function setChip(name,date){
+  document.getElementById('cd-name').value=name;
+  const iso=new Date(date).toISOString().slice(0,16);
+  document.getElementById('cd-date').value=iso;
+  startCD();
+}
+function startCD(){
+  const name=document.getElementById('cd-name').value.trim()||'Our Special Day';
+  const dateStr=document.getElementById('cd-date').value;
+  if(!dateStr)return;
+  const target=new Date(dateStr).getTime();
+  document.getElementById('cd-event-name').textContent='💝 '+name;
+  if(cdInterval)clearInterval(cdInterval);
+  cdInterval=setInterval(()=>{
+    const diff=target-Date.now();
+    if(diff<=0){
+      clearInterval(cdInterval);
+      ['cd-d','cd-h','cd-m','cd-s'].forEach(id=>document.getElementById(id).textContent='🎉');
+      document.getElementById('cd-since').textContent='The moment has arrived! ✨';
+      triggerHearts();
       return;
     }
-    const d = Math.floor(diff / 86400000);
-    const h = Math.floor((diff % 86400000) / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
-    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
-    document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
-    document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
-  }, 1000);
+    const d=Math.floor(diff/86400000);
+    const h=Math.floor(diff%86400000/3600000);
+    const m=Math.floor(diff%3600000/60000);
+    const s=Math.floor(diff%60000/1000);
+    document.getElementById('cd-d').textContent=String(d).padStart(2,'0');
+    document.getElementById('cd-h').textContent=String(h).padStart(2,'0');
+    document.getElementById('cd-m').textContent=String(m).padStart(2,'0');
+    document.getElementById('cd-s').textContent=String(s).padStart(2,'0');
+    const total=Math.abs(Math.floor((target-new Date(document.getElementById('cd-date').value).getTime())/86400000));
+    document.getElementById('cd-since').textContent=`${d} days, ${h} hours to go`;
+  },1000);
 }
 
-// ── GIFT MODAL ──
-const gifts = {
-  bouquet: {
-    emoji: '💐',
-    title: 'A Garden of Love',
-    body: 'A thousand roses that will never wilt, a garden that blooms every time you think of me. These flowers carry every word I couldn't say — every "I love you" that gets lost in silence but lives in my heart forever. Keep them close, always.'
-  },
-  stars: {
-    emoji: '⭐',
-    title: 'Your Star in the Universe',
-    body: 'Somewhere between Andromeda and the Milky Way, there is a star that burns only for you. I named it after the feeling I get when I see your smile — bright, warm, and impossible to ignore. Look up tonight; it's always watching over you.'
-  },
-  music: {
-    emoji: '🎵',
-    title: 'Our Soundtrack',
-    body: 'Every song has a memory. The first song we heard together. The one that played when we were silent but everything was said. This playlist is every emotion we\'ve shared, wrapped in melody. Press play whenever you miss us.'
-  },
-  ring: {
-    emoji: '💍',
-    title: 'My Promise to You',
-    body: 'This ring holds a promise: to choose you every morning, in every argument, in every boring Tuesday, in every beautiful and terrible day that comes. Not because I have to — but because you are the person I want beside me in all of them.'
-  },
-  letter: {
-    emoji: '📜',
-    title: 'A Letter That Lives Forever',
-    body: 'If time could be folded and stored, I\'d save every moment with you — the quiet ones, the laughing ones, the ones where we sat in comfortable silence and that was enough. This letter is that collection: every feeling I\'ve ever had that started with your name.'
-  },
-  future: {
-    emoji: '🚀',
-    title: 'A Date Booked for 2050',
-    body: 'Table for two. 2050. The restaurant on the moon they\'re still building, the sunset cruise through Saturn\'s rings, or just our favorite café — wherever we are, I\'ve already booked us a spot. Fifty years from now, I\'ll still be reaching for your hand. Save the date. 🌌'
-  }
+// ── GIFT VAULT ──
+const giftData={
+  roses:{icon:'🌹',title:'999 Roses For You',body:'Each rose is a memory of you — the way you laugh, the way you look when you\'re thinking, the warmth of you nearby. These 999 roses will never wilt because what they represent can never fade. They are the 999 reasons I fall in love with you every single day.'},
+  star:{icon:'⭐',title:'Your Star in the Universe',body:'Somewhere between the Milky Way and Andromeda, a star burns only for you. It has no official name in any catalog, but I call it yours — bright, constant, and impossible to ignore even from a billion miles away. Look up on the clearest nights. That\'s the one.'},
+  ring:{icon:'💍',title:'My Promise, Forever',body:'This ring carries one promise: to choose you every morning, in every ordinary moment, in every difficult chapter. Not because I have to. Because you are the person I want beside me in every version of this life, and every life after.'},
+  music:{icon:'🎵',title:'Our Soundtrack',body:'Every love has a playlist. The first song that made you think of me. The one playing when we were silent and didn\'t need words. The song that always finds its way back. This playlist is every feeling between us — pressed into sound.'},
+  moon:{icon:'🌙',title:'The Moon Is Yours',body:'People say you can\'t give someone the moon. But they\'ve never seen you. For you, I\'d rearrange gravity itself. So yes — the moon is yours. Every phase of it. The way it lights the sky on your hardest nights? That\'s me, watching over you from every distance.'},
+  time:{icon:'⏳',title:'Time Capsule — Open in 2030',body:'This is a gift you can only open together, five years from now. Inside is this moment — us, here, at the beginning of everything. Read this in 2030 and remember: even then, we didn\'t know yet how good it would get. But we were already becoming it.'},
+  universe:{icon:'🌌',title:'A Universe Built For You',body:'Scientists say the universe is 13.8 billion years old. I believe every second of it — every star that formed and collapsed, every galaxy that spun into being — was the universe preparing to create you. You are the most extraordinary thing it ever made. And I get to love you. I\'m the luckiest thing in it.'},
+  poem:{icon:'📜',title:'An AI Love Poem',body:'[Generating…]',needsAI:true}
 };
 
-function openGift(type) {
-  const g = gifts[type];
-  document.getElementById('modal-emoji').textContent = g.emoji;
-  document.getElementById('modal-title').textContent = g.title;
-  document.getElementById('modal-body').textContent = g.body;
-  document.getElementById('gift-modal').classList.add('open');
-  // Confetti burst
-  launchConfetti();
+let currentGiftType='';
+async function openGift(type){
+  currentGiftType=type;
+  const g=giftData[type];
+  document.getElementById('m-icon').textContent=g.icon;
+  document.getElementById('m-title').textContent=g.title;
+  let body=g.body;
+  if(g.needsAI){
+    document.getElementById('m-body').textContent='✨ Generating your poem…';
+    openModal('gift-modal');
+    confettiBurst();
+    try{
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-6',max_tokens:1000,
+          messages:[{role:'user',content:'Write a beautiful 8-line love poem. Romantic, lyrical, with imagery of stars, time, and eternal love. No title. Just the poem.'}]
+        })
+      });
+      const data=await res.json();
+      body=data.content?.[0]?.text||'Love is the universe\'s most beautiful accident.';
+    }catch(e){body='In every star I see your face,\nIn every dawn, your warm embrace.\nTime cannot dim what we have found —\nA love too deep for any sound.';}
+    document.getElementById('m-body').textContent=body;
+    window._currentGiftText=body;
+    return;
+  }
+  document.getElementById('m-body').textContent=body;
+  window._currentGiftText=body;
+  openModal('gift-modal');
+  confettiBurst();
 }
-function closeGift() {
-  document.getElementById('gift-modal').classList.remove('open');
+function copyGiftText(){
+  if(window._currentGiftText) navigator.clipboard.writeText(window._currentGiftText);
+  showToast('Copied! 📋');
 }
-document.getElementById('gift-modal').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) closeGift();
+function shareGift(){
+  if(navigator.share&&window._currentGiftText) navigator.share({text:window._currentGiftText});
+  else copyGiftText();
+}
+
+// ── LETTER GENERATOR ──
+async function generateLetter(){
+  const from=document.getElementById('l-from').value.trim()||'Your Love';
+  const to=document.getElementById('l-to').value.trim()||'My Beloved';
+  const theme=document.getElementById('l-theme').value;
+  const out=document.getElementById('letter-output');
+  const btn=document.getElementById('letter-btn');
+  const themeMap={
+    forever:'eternal love, choosing them forever, the depth of what they feel',
+    missing:'the ache of missing them, vivid memories, counting down to being together',
+    gratitude:'profound gratitude for having them in life, listing specific ways they have changed everything',
+    future:'shared dreams, adventures ahead, building a life together',
+    apology:'a sincere, loving apology — taking responsibility with grace and love'
+  };
+  btn.disabled=true;btn.textContent='✍️ Writing…';
+  out.className='letter-output';out.textContent='Writing your letter…';
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',max_tokens:1000,
+        messages:[{role:'user',content:`Write a full, deeply heartfelt love letter from ${from} to ${to}.
+Theme: ${themeMap[theme]}.
+Format: Start with "My dearest ${to}," and end with "Forever yours, ${from}"
+Length: 5-7 paragraphs. Make it emotionally profound, specific, and beautiful. 
+Use vivid imagery. This should feel like the most meaningful letter someone has ever received.`}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content?.[0]?.text||'My dearest love,\n\nYou are my everything.\n\nForever yours.';
+    out.textContent=text;
+    window._currentLetter=text;
+    document.getElementById('letter-actions').style.display='flex';
+  }catch(e){
+    out.textContent='Could not generate letter. Please try again.';
+  }
+  btn.disabled=false;btn.textContent='✍️ Write Letter';
+}
+function copyLetter(){
+  if(window._currentLetter) navigator.clipboard.writeText(window._currentLetter);
+  showToast('Letter copied! 📋');
+}
+function printLetter(){
+  if(!window._currentLetter)return;
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><title>Love Letter</title><style>
+    body{font-family:Georgia,serif;max-width:700px;margin:60px auto;font-size:18px;line-height:2;color:#222;padding:2rem}
+    pre{white-space:pre-wrap;font-family:Georgia,serif}
+  </style></head><body><pre>${window._currentLetter}</pre></body></html>`);
+  w.document.close();w.print();
+}
+
+// ── DREAM MODAL ──
+function addDream(){openModal('dream-modal');}
+function saveDream(){
+  const year=document.getElementById('d-year').value.trim()||'Soon';
+  const dream=document.getElementById('d-dream').value.trim();
+  if(!dream)return;
+  const grid=document.querySelector('.future-grid');
+  const lastCard=grid.lastElementChild;
+  const card=document.createElement('div');
+  card.className='future-card glass';
+  card.innerHTML=`<span class="fc-year">${year}</span><span class="fc-icon">✨</span><div class="fc-title">Our Dream</div><div class="fc-desc">${dream}</div><span class="fc-tag">Written by Us</span>`;
+  grid.insertBefore(card,lastCard);
+  closeModal('dream-modal');
+  showToast('Dream added to your future! ✨');
+  obs.observe(card);
+}
+
+// ── MODALS ──
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal').forEach(m=>{
+  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
 });
 
-function launchConfetti() {
-  const colors = ['#ff2d7a','#ffd166','#c77dff','#a0f5d6','#ff6fa8'];
-  for (let i = 0; i < 30; i++) {
-    const dot = document.createElement('div');
-    dot.style.cssText = `
-      position:fixed; border-radius:50%;
-      width:${4+Math.random()*6}px; height:${4+Math.random()*6}px;
-      background:${colors[Math.floor(Math.random()*colors.length)]};
-      left:${Math.random()*100}vw; top:${Math.random()*100}vh;
-      pointer-events:none; z-index:300;
-      animation: confettiFall 2s ease-out forwards;
-      animation-delay:${Math.random()*0.5}s;
-    `;
-    document.body.appendChild(dot);
-    setTimeout(() => dot.remove(), 2500);
+// ── CONFETTI ──
+function confettiBurst(){
+  const cols=['#ff1a6e','#ffc857','#8b31ff','#ff6fa8','#a0f5d6','#ffffff'];
+  for(let i=0;i<50;i++){
+    setTimeout(()=>{
+      const d=document.createElement('div');
+      d.className='conf';
+      d.style.cssText=`left:${Math.random()*100}vw;top:${20+Math.random()*60}vh;width:${4+Math.random()*8}px;height:${4+Math.random()*8}px;background:${cols[Math.floor(Math.random()*cols.length)]};animation-delay:${Math.random()*.6}s`;
+      document.body.appendChild(d);
+      setTimeout(()=>d.remove(),2800);
+    },i*15);
   }
 }
-const style = document.createElement('style');
-style.textContent = `@keyframes confettiFall {
-  0%{transform:translateY(-20px) rotate(0deg); opacity:1;}
-  100%{transform:translateY(60px) rotate(720deg); opacity:0;}
-}`;
-document.head.appendChild(style);
 
-// Override fluid config to use romantic colors
-// The fluid sim is initialized by webgl-fluid.js fetching config.json
-// We patch the fetch to redirect to our love config
-const origFetch = window.fetch;
-window.fetch = function(url, opts) {
-  if (typeof url === 'string' && url.includes('config.json')) {
-    return origFetch('config-love.json', opts);
-  }
-  return origFetch(url, opts);
-};
+// ── TOAST ──
+function showToast(msg){
+  const t=document.createElement('div');
+  t.style.cssText=`position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:rgba(255,26,110,.15);border:1px solid rgba(255,107,168,.3);backdrop-filter:blur(20px);color:var(--pearl);padding:.7rem 1.8rem;border-radius:50px;font-size:.88rem;z-index:9999;animation:fadeUp .4s both;pointer-events:none`;
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2500);
+}
+
+// ── KEYBOARD SHORTCUTS ──
+document.addEventListener('keydown',e=>{
+  if(e.key==='h'||e.key==='H') triggerHearts();
+  if(e.key===' '&&e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA'){e.preventDefault();triggerHearts();}
+});
 </script>
 </body>
 </html>
