@@ -1735,19 +1735,17 @@ function runSimulation(config) {
 
   // Updated to allow single colors
   function generateColor() {
-    if (config.RANDOM_COLORS) {
-      let c = HSVtoRGB(Math.random(), 1.0, 1.0);
-      c.r *= 0.15;
-      c.g *= 0.15;
-      c.b *= 0.15;
-      return c;
-    } else {
-      let c = HSVtoRGB(config.SPLAT_HUE, 1.0, 1.0);
-      c.r *= 0.15;
-      c.g *= 0.15;
-      c.b *= 0.15;
-      return c;
-    }
+    // Romantic palette: pinks, purples, magentas, golds
+    const romanticHues = [
+      { r: 1.0, g: 0.1, b: 0.5 },   // hot pink
+      { r: 0.8, g: 0.0, b: 0.9 },   // purple
+      { r: 1.0, g: 0.4, b: 0.7 },   // blush
+      { r: 0.9, g: 0.6, b: 0.0 },   // gold
+      { r: 0.5, g: 0.0, b: 1.0 },   // violet
+      { r: 1.0, g: 0.2, b: 0.3 },   // crimson
+    ];
+    const pick = romanticHues[Math.floor(Math.random() * romanticHues.length)];
+    return { r: pick.r * 0.18, g: pick.g * 0.18, b: pick.b * 0.18 };
   }
 
   function HSVtoRGB(h, s, v) {
