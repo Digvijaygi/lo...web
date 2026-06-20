@@ -1,0 +1,22 @@
+{
+  "name": "loveverse",
+  "version": "1.0.0",
+  "description": "A magical space for lovers — heartfelt messages, future dreams, and digital gifts.",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve .",
+    "build": "echo 'No build needed for static site'",
+    "vercel-build": "echo 'Static site deployment'"
+  },
+  "keywords": [
+    "love",
+    "romantic",
+    "webgl",
+    "fluid-simulation"
+  ],
+  "author": "LoveVerse Team",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.0.0"
+  }
+}
